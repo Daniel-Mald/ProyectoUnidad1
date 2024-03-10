@@ -12,6 +12,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Windows.Media;
 
 //using System.Windows.Controls;
 //using System.IO;
@@ -39,6 +40,7 @@ namespace GaleriaDeFotosServer.ViewModels
                     Select(x => x.ToString()));
             }
             _server.FotoRecibida += _server_FotoRecibida;
+            
             CargarImagenes();
         }
 
@@ -50,15 +52,16 @@ namespace GaleriaDeFotosServer.ViewModels
                 //guardar
                 byte[] bytes = Convert.FromBase64String(e.Img);
                 Image _image;
-                int n = 2;
+                int n;
                 if (!Directory.Exists($"imagenes/{e.NombreUser}"))
                 {
                     Directory.CreateDirectory($"imagenes/{e.NombreUser}");
                 }
+                n = Directory.GetFiles($"imagenes/{e.NombreUser}").Count();
                 using (MemoryStream ms = new MemoryStream(bytes))
                 {
                     _image = Image.FromStream(ms);
-                    _image.Save($"Imagenes/{e.NombreUser}/{n}.jpg");
+                    _image.Save($"Imagenes/{e.NombreUser}/{n+1}.jpg");
 
 
                 }
@@ -105,11 +108,17 @@ namespace GaleriaDeFotosServer.ViewModels
 
         void CargarImagenes()
         {
-            string[] fotos = Directory.GetFiles("Imagenes");
-            foreach (var item in fotos)
-            {   
-                Imagenes.Add(Image.FromFile(item));
+            //tiene que ser de todas las carpetas
+
+            string[] carpetas = Directory.GetFiles("Imagenes/");
+            foreach (var item in carpetas)
+            {
+                foreach (var j in $"Imagenes/{item}/")
+                {
+                    Imagenes.Add(Image.FromFile(item));
+                }
             }
+            
 
         }
     }

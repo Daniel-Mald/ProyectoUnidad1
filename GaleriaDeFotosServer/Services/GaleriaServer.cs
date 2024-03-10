@@ -1,6 +1,7 @@
 ﻿using GaleriaDeFotosServer.Models.DTOs;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -9,6 +10,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace GaleriaDeFotosServer.Services
 {
@@ -16,7 +18,9 @@ namespace GaleriaDeFotosServer.Services
     {
         TcpListener _server = null!;
         List<TcpClient> _clientes = new List<TcpClient>();
-        public event EventHandler<ImageDTO> FotoRecibida;
+        public event EventHandler<ImageDTO>? FotoRecibida;
+        //public event EventHandler<TcpClient>? UsuaioConectado;
+        
         public void IniciarServer()
         {
             _server = new(new IPEndPoint(IPAddress.Any, 30000));
@@ -55,8 +59,37 @@ namespace GaleriaDeFotosServer.Services
                 
             }
         }
+
+        //Este metodo le manda las imagenes que tiene al usuario
+        void MandarImagenes(ImageDTO dto, TcpClient cliente)
+        {
+            string ruta = $"imagenes/{dto.NombreUser}";
+            if (Directory.Exists(ruta))
+            {
+                List<ImageDTO> imagenesDeVuelta = new();
+                var fotos =  Directory.GetFiles(ruta);
+                foreach (var item in fotos)
+                {
+                    ImageDTO x = new()
+                    {
+                        NombreUser = dto.NombreUser,
+                        Img = Convert.ToBase64String(File.ReadAllBytes(item))
+                    };
+                    imagenesDeVuelta.Add(x);
+                }
+
+                var json = JsonSerializer.Serialize(imagenesDeVuelta);
+                byte[] buffer = Encoding.UTF8.GetBytes(json);
+                var ns = cliente.GetStream();              
+                ns.Write(buffer, 0, buffer.Length);
+                ns.Flush();
+            }
+            
+        }
         void Recibir(TcpClient c)
         {
+            bool RecienConectadoBandera = true;
+                     
             while (c.Connected)
             {
                 var networkStream = c.GetStream();
@@ -72,19 +105,16 @@ namespace GaleriaDeFotosServer.Services
                 var dto = JsonSerializer.Deserialize<ImageDTO>(json);
                 if(dto != null)
                 {
+                    if (RecienConectadoBandera)
+                    {
+                        MandarImagenes(dto, c);
+                        RecienConectadoBandera = false;
+                    }
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         FotoRecibida?.Invoke(this, dto);
                     });
-                }
-
-                //string base64text = System.Text.Encoding.ASCII.GetString(buffer,0,buffer.Length);
-                 
-                //var base64Image = System.Convert.FromBase64String(base64text);
-                //IPEndPoint clientEndPoint = (IPEndPoint)
-                //string imageName = $"Imagenes/{c.}";
-                //System.IO.File.WriteAllBytes()
-                //evento
+                }             
             }
         }
     }
