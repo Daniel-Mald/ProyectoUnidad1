@@ -41,6 +41,15 @@ namespace GaleriaDeFotosCliente.ViewModels
             ConectarCommand = new RelayCommand(Conectar);
             DesconectarCommand = new RelayCommand(Desconectar);
             EliminarCommand = new RelayCommand<string>(Eliminar); //Enviar como parametro el string "img" de ImageDTO
+            cliente.ImagenRecibida += Cliente_ImagenRecibida1;
+        }
+
+        private void Cliente_ImagenRecibida1(object? sender, ImageDTO e)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ListaImgs.Add(e);
+            });
         }
 
         private void Desconectar()
@@ -76,7 +85,7 @@ namespace GaleriaDeFotosCliente.ViewModels
                     NombreUser = cliente.Equipo,
                     Img = Convert.ToBase64String(bytesImg)
                 };
-                ListaImgs.Add(img);
+                //ListaImgs.Add(img);
                 cliente.EnviarIMG(img);
             }
         }
@@ -84,15 +93,8 @@ namespace GaleriaDeFotosCliente.ViewModels
 
         //Lo hice pensando que tmb tendria un carrusel el cliente
 
-        //private void Cliente_ImagenRecibida(object? sender, ImageDTO e) 
-        //{
-        //    Application.Current.Dispatcher.Invoke(() =>
-        //    {
-        //        ListaImgs.Add(e);
-        //    });
-        //}
+        
 
-       
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

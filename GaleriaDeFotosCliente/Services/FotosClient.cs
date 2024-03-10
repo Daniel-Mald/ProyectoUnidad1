@@ -38,37 +38,37 @@ namespace GaleriaDeFotosCliente.Services
             client.Close();
         }
 
-        //public void RecibirIMG()
-        //{
-        //    new Thread(() =>
-        //    {
-        //        try
-        //        {
-        //            while (client.Connected)
-        //            {
-        //                var ns = client.GetStream();
-        //                byte[] buffer = new byte[client.Available]; 
-        //                ns.Read(buffer, 0, buffer.Length);
+        public void RecibirIMG()
+        {
+            new Thread(() =>
+            {
+                try
+                {
+                    while (client.Connected)
+                    {
+                        var ns = client.GetStream();
+                        byte[] buffer = new byte[client.Available];
+                        ns.Read(buffer, 0, buffer.Length);
 
-        //                var img = JsonSerializer.Deserialize<ImageDTO>
-        //                (Encoding.UTF8.GetString(buffer));
-        //                Application.Current.Dispatcher.Invoke(() =>
-        //                {
-        //                    if(img != null)
-        //                    {
-        //                        ImagenRecibida?.Invoke(this, img);
-        //                    }
-        //                });
-        //            }
-        //        }
-        //        catch(Exception ex)
-        //        {
+                        var img = JsonSerializer.Deserialize<ImageDTO>
+                        (Encoding.UTF8.GetString(buffer));
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            if (img != null)
+                            {
+                                ImagenRecibida?.Invoke(this, img);
+                            }
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
 
-        //        }
-        //    })
-        //    { IsBackground = true }.Start();
+                }
+            })
+            { IsBackground = true }.Start();
 
-        //}
+        }
 
         public void EnviarIMG(ImageDTO img) 
         {
