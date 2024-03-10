@@ -39,32 +39,50 @@ namespace GaleriaDeFotosServer.ViewModels
                     Select(x => x.ToString()));
             }
             _server.FotoRecibida += _server_FotoRecibida;
+            CargarImagenes();
         }
 
         public void _server_FotoRecibida(object? sender, ImageDTO e)
         {
+            
             if(e.Estado == true)
             {
                 //guardar
                 byte[] bytes = Convert.FromBase64String(e.Img);
                 Image _image;
-                using ( MemoryStream ms = new MemoryStream(bytes))
+                int n = 2;
+                if (!Directory.Exists($"imagenes/{e.NombreUser}"))
                 {
-                     _image = Image.FromStream(ms);
-                    _image.Save($"/Imagenes/{e.NombreUser}.jpg");
-
-                   
+                    Directory.CreateDirectory($"imagenes/{e.NombreUser}");
                 }
+                using (MemoryStream ms = new MemoryStream(bytes))
+                {
+                    _image = Image.FromStream(ms);
+                    _image.Save($"Imagenes/{e.NombreUser}/{n}.jpg");
+
+
+                }
+
+
                 Imagenes.Add(_image);
             }
             else
             {
                 //eliminar
-                string ruta = $"Imagenes/{e.NombreUser}.jpg";
-                if (System.IO.File.Exists(ruta))
+                try
                 {
-                    System.IO.File.Delete(ruta);
+                    string ruta = $"Imagenes/{e.NombreUser}.jpg";
+                    if (System.IO.File.Exists(ruta))
+                    {
+                        System.IO.File.Delete(ruta);
+                    }
                 }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                
                 
             }
             //guardar la imagen
@@ -87,6 +105,11 @@ namespace GaleriaDeFotosServer.ViewModels
 
         void CargarImagenes()
         {
+            string[] fotos = Directory.GetFiles("Imagenes");
+            foreach (var item in fotos)
+            {   
+                Imagenes.Add(Image.FromFile(item));
+            }
 
         }
     }
