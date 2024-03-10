@@ -4,9 +4,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GaleriaDeFotosServer"
+        xmlns:vm="clr-namespace:GaleriaDeFotosServer.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Window.DataContext>
+        <vm:ServerViewModel></vm:ServerViewModel>
+    </Window.DataContext>
+    <StackPanel>
+        <TextBlock>Ip</TextBlock>
+        <TextBox Text="{Binding IP}"></TextBox>
+        <Button Command="{Binding IniciarServerCommand}">Iniciar el perro server</Button>
+        <ListBox x:Name="imageListBox" ItemsSource="{Binding Imagenes2}" HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="500">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel Background="Red">
+                        <Image DockPanel.Dock="Top" Source="../Imagenes/DESKTOP-72PE60T/1.jpg"  Height="100" Width="100" Margin="5"/>
+                        
+                    </DockPanel>
 
-    </Grid>
+
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
 </Window>

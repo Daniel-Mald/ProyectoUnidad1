@@ -15,6 +15,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Drawing;
+using Microsoft.Win32;
+
 
 namespace GaleriaDeFotosCliente.ViewModels
 {
@@ -22,12 +25,13 @@ namespace GaleriaDeFotosCliente.ViewModels
     {
         FotosClient cliente = new();
         public string Imagen {  get; set; } //Ruta de la imagen de la pc, ejemplo: C:\Users\Alka\Pictures\1.jpg
+        //public System.Drawing.Image Imagencion { get; set; }
         public string IP { get; set; } = ""; 
         public bool Conectado { get; set; }
 
         public ICommand ConectarCommand { get; set; }
         public ICommand DesconectarCommand { get; set; }
-
+        public ICommand CargarFotoCommand { get; set; }
         public ICommand EnviarCommand { get; set; }
         public ICommand EliminarCommand { get; set; }
 
@@ -40,8 +44,19 @@ namespace GaleriaDeFotosCliente.ViewModels
             EnviarCommand = new RelayCommand(Enviar);
             ConectarCommand = new RelayCommand(Conectar);
             DesconectarCommand = new RelayCommand(Desconectar);
-            EliminarCommand = new RelayCommand<string>(Eliminar); //Enviar como parametro el string "img" de ImageDTO
+            EliminarCommand = new RelayCommand<ImageDTO>(Eliminar); //Enviar como parametro el string "img" de ImageDTO
+            CargarFotoCommand = new RelayCommand(CargarFoto);
             cliente.ImagenRecibida += Cliente_ImagenRecibida1;
+        }
+
+        private void CargarFoto()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+
+               Imagen = openFileDialog.FileName;
+            }
         }
 
         private void Cliente_ImagenRecibida1(object? sender, ImageDTO e)
@@ -57,7 +72,7 @@ namespace GaleriaDeFotosCliente.ViewModels
             cliente.Desconectar();
         }
 
-        private void Eliminar(string? obj)
+        private void Eliminar(ImageDTO i)
         {
             
         }
@@ -77,6 +92,13 @@ namespace GaleriaDeFotosCliente.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(Imagen))
             {
+                //string camello;
+                //using(MemoryStream ms = new())
+                //{
+                //    Imagencion.Save(ms, Imagencion.RawFormat);
+                //    camello = ms.ToString();
+                //}
+                //string camello = 
                 byte[] bytesImg = File.ReadAllBytes(Imagen);
 
                 ImageDTO img = new()

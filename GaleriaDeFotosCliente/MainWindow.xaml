@@ -4,9 +4,30 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GaleriaDeFotosCliente"
+        xmlns:vm="clr-namespace:GaleriaDeFotosCliente.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Window.DataContext>
+        <vm:FotosViewModel></vm:FotosViewModel>
+    </Window.DataContext>
+    <StackPanel>
+        <TextBlock>Ip</TextBlock>
+        <TextBox Text="{Binding IP}"></TextBox>
+        <Button Command="{Binding ConectarCommand}">Conectar</Button>
+        <Button x:Name="CargarLaMalditaImagencita" Command="{Binding CargarFotoCommand}">Cargar la maldita perra imagen de porqueria</Button>
+        <TextBlock x:Name="RutaImagen" Text="{Binding Imagen}"></TextBlock>
+        <Button Command="{Binding EnviarCommand}">Enviar alv</Button>
+        <ListBox x:Name="imageListBox" ItemsSource="{Binding ListaImgs}" HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="500">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel>
+                        <Image DockPanel.Dock="Top" Source="{Binding Img}" Height="100" Width="100" Margin="5"/>
+                        <Button Command="{Binding Source={RelativeSource AncestorType={x:Type Window}},Path=BindingContext.EliminarCommand}" CommandParameter="{Binding .}"></Button>
+                    </DockPanel>
 
-    </Grid>
+
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
 </Window>

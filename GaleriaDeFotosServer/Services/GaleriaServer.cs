@@ -23,7 +23,7 @@ namespace GaleriaDeFotosServer.Services
         
         public void IniciarServer()
         {
-            _server = new(new IPEndPoint(IPAddress.Any, 30000));
+            _server = new(new IPEndPoint(IPAddress.Any, 8001));
             _server.Start();
             new Thread(Escuchar)
             {
