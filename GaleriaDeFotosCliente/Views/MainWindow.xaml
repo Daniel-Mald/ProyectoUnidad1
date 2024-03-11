@@ -62,12 +62,10 @@
                                RenderOptions.BitmapScalingMode="HighQuality"/>
                             <Button Command="{Binding Path=  DataContext.EliminarCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
                                 CommandParameter="{Binding .}"
-                                Content="&#x274C;"
-                                
+                                Content="ELIMINAR"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top"
-                                Margin="15"
-                                Padding="10">
+                                Margin="15">
                                 <Button.Resources>
                                     <Style TargetType="{x:Type Border}">
                                         <Setter Property="CornerRadius" Value="7"/>
@@ -123,6 +121,8 @@
                         </Button.Resources>
                     </Button>
                 </DockPanel>
+                <TextBlock HorizontalAlignment="Center"
+                           Text="{Binding Error}"></TextBlock>
                 <Button x:Name="CargarLaMalditaImagencita" 
                         Command="{Binding CargarFotoCommand}"
                         Margin="0,5">Cargar imagen

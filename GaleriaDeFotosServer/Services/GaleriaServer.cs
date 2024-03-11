@@ -138,8 +138,7 @@ namespace GaleriaDeFotosServer.Services
                     File.Delete($"../Imagenes/{dto.NombreUser}/{dto.ImagenId}.jpg");
                 }
                
-                   //aqui manda las imagenes de regreso al cliente
-                    MandarImagenes(dto.NombreUser, c);
+
                     
                 
                 if (dto != null && c.Available == 0)
@@ -150,7 +149,10 @@ namespace GaleriaDeFotosServer.Services
                         FotoRecibida?.Invoke(this, dto);
                     });
                 }
-                
+
+                //aqui manda las imagenes de regreso al cliente
+                MandarImagenes(dto.NombreUser, c);
+
             }
         }
     }

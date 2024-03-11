@@ -28,7 +28,11 @@ namespace GaleriaDeFotosServer.ViewModels
         public string IP { get; set; } = "0.0.0.0";
         string rutaImagenes = @"..\Imagenes\";
         public GaleriaServer _server { get; set; } = new();
-        public ObservableCollection<BitmapImage> Imagenes2 { get; set; } = new();
+        [ObservableProperty]
+        public ObservableCollection<BitmapImage> imagenes2 = new();
+        [ObservableProperty]
+        public string error = "";
+        public bool Conectado { get; set; } = false;
         [ObservableProperty]
         public BitmapImage ultimaImg;
 
@@ -96,10 +100,19 @@ namespace GaleriaDeFotosServer.ViewModels
         [RelayCommand]
         private void IniciarServer()
         {
-            _server.IniciarServer();
-            CargarImagenes();
-            if(UltimaImg != null)
-            UltimaImg = Imagenes2.Last();
+            if (Conectado == false)
+            {
+                _server.IniciarServer();
+                CargarImagenes();
+                if (UltimaImg != null)
+                    UltimaImg = Imagenes2.Last();
+                Conectado = true;
+            }
+            else
+            {
+                Error = "El servidor ya esta encendido.";
+            }
+
         }
         [RelayCommand]
         void DetenerServidor()

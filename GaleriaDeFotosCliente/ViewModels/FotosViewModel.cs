@@ -30,6 +30,7 @@ namespace GaleriaDeFotosCliente.ViewModels
         //public System.Drawing.Image Imagencion { get; set; }
         public string IP { get; set; } = ""; 
         public bool Conectado { get; set; }
+        public string Error { get; set; } = "";
 
         public ICommand ConectarCommand { get; set; }
         public ICommand DesconectarCommand { get; set; }
@@ -55,6 +56,7 @@ namespace GaleriaDeFotosCliente.ViewModels
         private void CargarFoto()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Archivos de imagen JPG (*.jpg)|*.jpg";
             if (openFileDialog.ShowDialog() == true)
             {
 
@@ -94,10 +96,11 @@ namespace GaleriaDeFotosCliente.ViewModels
 
                     ListaImagenes.Add(item);
                     }
-                    
-                
-                  
-                
+
+
+                PropertyChanged?.Invoke(this, new(nameof(ListaImagenes)));
+
+
             });
         }
         void CargarFotos()
@@ -126,17 +129,29 @@ namespace GaleriaDeFotosCliente.ViewModels
                     cliente.EnviarIMG(img);
                 
             }
+            PropertyChanged?.Invoke(this, new(nameof(ListaImagenes)));
+
         }
 
         private void Conectar()
         {
-            IPAddress.TryParse(IP, out IPAddress? ipAddress);
-            if(ipAddress != null)
+            if (Conectado == false)
             {
-                cliente.Conectar(ipAddress);
-                Conectado = true;
-                PropertyChanged?.Invoke(this, new(nameof(Conectado)));
+                IPAddress.TryParse(IP, out IPAddress? ipAddress);
+                if (ipAddress != null)
+                {
+                    cliente.Conectar(ipAddress);
+                    Conectado = true;
+                }
             }
+            else
+            {
+                Error = "Conexion exitosa a la Kiss Cam";
+            }
+            PropertyChanged?.Invoke(this, new(nameof(Conectado)));
+            PropertyChanged?.Invoke(this, new(nameof(Error)));
+
+
         }
 
         private void Enviar()
@@ -155,6 +170,7 @@ namespace GaleriaDeFotosCliente.ViewModels
                 
                 cliente.EnviarIMG(img);
                 Imagen = "";
+                PropertyChanged?.Invoke(this, new(nameof(Imagen)));
             }
         }
 
