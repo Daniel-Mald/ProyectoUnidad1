@@ -70,33 +70,34 @@ namespace GaleriaDeFotosServer.Services
         }
 
         //Este metodo le manda las imagenes que tiene al usuario
-        void MandarImagenes(ImageDTO dto, TcpClient cliente)
+        async Task MandarImagenes(string nombre, TcpClient cliente)
         {
             try
             {
-                string ruta = $"../imagenes/{dto.NombreUser}";
+                string ruta = $"../imagenes/{nombre}";
                 if (Directory.Exists(ruta))
                 {
-                    //List<ImageDTO> imagenesDeVuelta = new();
-                    Thread t = new(() =>
-                    {
+                    
                         var fotos = Directory.GetFiles(ruta);
-                        foreach (var item in fotos)
+                        foreach (var item in fotos) //este es el foreach que le regresa las imagenes al cliente, pero no entiendo porque aveces no da todas las iteraciones
                         {
-                            ImageDTO x = new()
-                            {
-                                NombreUser = dto.NombreUser,
-                                Img = Convert.ToBase64String(File.ReadAllBytes(item))
+                        ImageDTO x = new()
+                        {
+                            NombreUser = nombre,
+                            Img = Convert.ToBase64String(File.ReadAllBytes(item)),
+                            ImagenId = int.Parse(Path.GetFileNameWithoutExtension(item)),
                             };
-                            // imagenesDeVuelta.Add(x);
+                            
+                            //imagenesDeVuelta.Add(x);
                             var json = JsonSerializer.Serialize(x);
                             byte[] buffer = Encoding.UTF8.GetBytes(json);
                             var ns = cliente.GetStream();
-                            ns.Write(buffer, 0, buffer.Length);
+                           await ns.WriteAsync(buffer, 0, buffer.Length);
                             ns.Flush();
+                            
+
                         }
-                    });
-                    t.IsBackground = true; t.Start();
+                   
 
 
                 }
@@ -109,15 +110,17 @@ namespace GaleriaDeFotosServer.Services
             
             
         }
+        
         void Recibir(TcpClient c)
         {
             bool RecienConectadoBandera = true;
                      
             while (c.Connected)
             {
+
                 var ns = c.GetStream();
                 string json = "";
-                while(c.Available == 0)
+                while(c.Available == 0)//este pedazo lo hice porque si una imagen es demasiado grande me daba error
                 {
                     Thread.Sleep(500);
                 }
@@ -130,19 +133,25 @@ namespace GaleriaDeFotosServer.Services
                 var dto = JsonSerializer.Deserialize<ImageDTO>(json);
 
 
+                if(dto != null && dto.Estado == false)
+                {
+                    Directory.Delete($"../Imaagenes/{dto.NombreUser}/{dto.ImagenId}");
+                }
+                if (RecienConectadoBandera)
+                {
+                   //aqui manda las imagenes de regreso al cliente
+                    MandarImagenes(dto.NombreUser, c);
+                    RecienConectadoBandera = false;
+                }
                 if (dto != null && c.Available == 0)
                 {
-                    if (RecienConectadoBandera)
-                    {
-                        MandarImagenes(dto, c);
-                        RecienConectadoBandera = false;
-                    }
+                    
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         FotoRecibida?.Invoke(this, dto);
                     });
                 }
-                //Thread.Sleep(1000);
+                
             }
         }
     }

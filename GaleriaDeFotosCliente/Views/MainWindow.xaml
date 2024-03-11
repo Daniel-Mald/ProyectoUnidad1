@@ -55,12 +55,12 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid HorizontalAlignment="Center">
-                        <Image Source="{Binding Img}" 
+                        <Image Source="{Binding Imagen}" 
                                Height="100" 
                                Width="200" 
                                Margin="5"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
-                        <Button Command="{Binding Source={RelativeSource AncestorType={x:Type Window}},Path=BindingContext.EliminarCommand}" 
+                        <Button Command="{Binding Source={RelativeSource AncestorType={x:Type Window}},Path=DataContext.EliminarCommand}" 
                                 CommandParameter="{Binding .}"
                                 Content="&#x274C;"
                                 HorizontalAlignment="Left"

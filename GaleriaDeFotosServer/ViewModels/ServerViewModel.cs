@@ -29,8 +29,8 @@ namespace GaleriaDeFotosServer.ViewModels
         string rutaImagenes = @"..\Imagenes\";
         public GaleriaServer _server { get; set; } = new();
         public ObservableCollection<BitmapImage> Imagenes2 { get; set; } = new();
-
-
+        [ObservableProperty]
+        public BitmapImage ultimaImg;
 
         public ServerViewModel()
         {
@@ -43,7 +43,7 @@ namespace GaleriaDeFotosServer.ViewModels
             }
             _server.FotoRecibida += _server_FotoRecibida;
             
-            // CargarImagenes();
+            
         }
 
         public void _server_FotoRecibida(object? sender, ImageDTO e)
@@ -69,6 +69,7 @@ namespace GaleriaDeFotosServer.ViewModels
                 }
 
                 var imagenN =PasarABitMapImage($"{rutaImagenes}{e.NombreUser}/{n+1}.jpg");
+                UltimaImg = imagenN;
                 Imagenes2.Add(imagenN);
             }
             else
@@ -97,6 +98,7 @@ namespace GaleriaDeFotosServer.ViewModels
         {
             _server.IniciarServer();
             CargarImagenes();
+            UltimaImg = Imagenes2.Last();
         }
         [RelayCommand]
         void DetenerServidor()
@@ -109,39 +111,39 @@ namespace GaleriaDeFotosServer.ViewModels
 
         void CargarImagenes()
         {
-            //tiene que ser de todas las carpetas
-            //string rutaImagenes = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Imagenes");
-            //string[] archivos = Directory.GetFiles(rutaImagenes);
+            
+            if (!Directory.Exists(rutaImagenes))
+            {
+                Directory.CreateDirectory (rutaImagenes);
+            }
 
             string[]? carpetas = Directory.GetDirectories(rutaImagenes);
-           // Directory.get
+           
             foreach (var item in carpetas)
             {
                 var x = Directory.GetFiles(item);
                 var y = Directory.GetFiles(item, "*jpg");
                 foreach (var j in y)
                 {
-                   // BitmapImage bitmapImage = new BitmapImage(new Uri(j));
                    
-                    //Imagenes.Add(Image.FromFile(j));
                    Imagenes2.Add( PasarABitMapImage(j));
-                    //Imagenes3.Add(j);
+                    
                 }
             }
             
 
         }
-        BitmapImage PasarABitMapImage(string ruta)
+        BitmapImage PasarABitMapImage(string ruta)//este metodo solo es para que haga las imagenes abitmap para la vista
         {
             BitmapImage imagen = new BitmapImage();
             imagen.BeginInit();
             imagen.UriSource = new Uri(ruta, UriKind.Relative);
             imagen.CacheOption = BitmapCacheOption.OnLoad;
-           // imagen.UriSource = new Uri(imagePath);
+          
             imagen.EndInit();
 
             return imagen;
-            //Imagenes2.Add(imagen);
+            
         }
     }
 }

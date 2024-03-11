@@ -25,7 +25,7 @@ namespace GaleriaDeFotosCliente.Services
                 client = new();
                 client.Connect(ipe);
                 Equipo = Dns.GetHostName();
-
+                RecibirIMG();
             }
             catch
             {
@@ -46,29 +46,78 @@ namespace GaleriaDeFotosCliente.Services
                 {
                     while (client.Connected)
                     {
-                        if(client.Available> 0)
+                        while (client.Available == 0)
                         {
-                            var ns = client.GetStream();
-                            byte[] buffer = new byte[client.Available];
-                            ns.Read(buffer, 0, buffer.Length);
-
-                            var img = JsonSerializer.Deserialize<ImageDTO>
-                            (Encoding.UTF8.GetString(buffer));
-                            Application.Current.Dispatcher.Invoke(() =>
-                            {
-                                if (img != null)
-                                {
-                                    ImagenRecibida?.Invoke(this, img);
-                                }
-                            });
-
+                            Thread.Sleep(500);
                         }
+                        
+                           
+                            
+                                var ns = client.GetStream();
+                        string json = "";
+
+
+                                while (client.Available > 0)
+                                {
+                                    byte[] buffer = new byte[client.Available];
+                                    ns.Read(buffer, 0, buffer.Length);
+                                    json+= Encoding.UTF8.GetString(buffer);
+
+                                }
+                            
+                            string[] n = json.Split('}');
+                            foreach (string item in n)
+                            {
+                               string newJson = item + "}";
+                                var img = JsonSerializer.Deserialize<ImageDTO>(newJson);
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    if (img != null)
+                                    {
+                                        ImagenRecibida?.Invoke(this, img);
+                                    }
+                                });
+                            }
+
+                            
+                            
+                        
+                       
+
+                        
+                        
+
+                        //while (client.Available > 0)
+                        //{
+                        //    byte[] buffer = new byte[client.Available];
+                        //    int bytesRead = ns.Read(buffer, 0, buffer.Length);
+                        //    json.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+                        //}
+
+
+
+                        //var img = JsonSerializer.Deserialize<ImageDTO>(json);
+
+                       
+
+
+
+
+
+
+
+
                     }
                 }
                 catch (Exception ex)
                 {
 
                 }
+                //finally
+                //{
+                //    // Cerrar la conexión y liberar recursos
+                //    client.Close();
+                //}
             })
             { IsBackground = true }.Start();
 

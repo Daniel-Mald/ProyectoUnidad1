@@ -11,5 +11,6 @@ namespace GaleriaDeFotosServer.Models.DTOs
         public string Img { get; set; } = "";
         public string NombreUser { get; set; } = "";
         public bool Estado { get; set; }
+        public int ImagenId { get; set; }
     }
 }

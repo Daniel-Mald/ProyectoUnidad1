@@ -18,6 +18,7 @@ using System.Windows.Threading;
 using System.Drawing;
 using Microsoft.Win32;
 using System.Windows.Media.Imaging;
+using GaleriaDeFotosCliente.Models;
 
 
 namespace GaleriaDeFotosCliente.ViewModels
@@ -37,8 +38,8 @@ namespace GaleriaDeFotosCliente.ViewModels
         public ICommand EliminarCommand { get; set; }
 
         
-        public ObservableCollection<ImageDTO> ListaImgs { get; set; } = new();
-        public ObservableCollection<BitmapImage> ListaImagenes { get; set; } = new();
+        //public ObservableCollection<ImageDTO> ListaImgs { get; set; } = new();
+        public ObservableCollection<ListaModel> ListaImagenes { get; set; } = new();//puse esta lista en vez de la otra
 
         public FotosViewModel()
         {
@@ -46,11 +47,11 @@ namespace GaleriaDeFotosCliente.ViewModels
             EnviarCommand = new RelayCommand(Enviar);
             ConectarCommand = new RelayCommand(Conectar);
             DesconectarCommand = new RelayCommand(Desconectar);
-            EliminarCommand = new RelayCommand<ImageDTO>(Eliminar); //Enviar como parametro el string "img" de ImageDTO
+            EliminarCommand = new RelayCommand<ListaModel>(Eliminar); //Enviar como parametro el string "img" de ImageDTO
             CargarFotoCommand = new RelayCommand(CargarFoto);
             cliente.ImagenRecibida += Cliente_ImagenRecibida1;
         }
-
+        
         private void CargarFoto()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -63,27 +64,40 @@ namespace GaleriaDeFotosCliente.ViewModels
 
         }
 
-        private void Cliente_ImagenRecibida1(object? sender, ImageDTO e)
+        private void Cliente_ImagenRecibida1(object? sender, ImageDTO e)//aqui es donde carga las imagens que me entrego es sserver
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                ListaImgs.Add(e);
-                byte[] bytes = Convert.FromBase64String(e.Img);
+
                 
-                using (MemoryStream ms = new MemoryStream(bytes))
-                {
-                    BitmapImage imagen = new BitmapImage();
-                    imagen.BeginInit();
-                    imagen.UriSource = new Uri(System.Drawing.Image.FromStream(ms).ToString());
-                    imagen.CacheOption = BitmapCacheOption.OnLoad;
-                    // imagen.UriSource = new Uri(imagePath);
-                    imagen.EndInit();
+
+                    byte[] bytes = Convert.FromBase64String(e.Img);
+                
+                    using (MemoryStream ms = new MemoryStream(bytes))
+                    {
+
+                        BitmapImage imagen = new BitmapImage();
+                        imagen.BeginInit();
+                        imagen.StreamSource = ms;
+                        imagen.CacheOption = BitmapCacheOption.OnLoad;
+                        //imagen.CacheOption = BitmapCacheOption.OnLoad;
+                        
+                         imagen.EndInit();
 
 
+                   ListaModel item = new ListaModel
+                    {
+                        id = e.ImagenId,
+                        Usuario = cliente.Equipo,
+                        Imagen = imagen
+                    };
 
-
-                    ListaImagenes.Add(imagen);
-                }
+                    ListaImagenes.Add(item);
+                    }
+                    
+                
+                  
+                
             });
         }
         void CargarFotos()
@@ -95,9 +109,21 @@ namespace GaleriaDeFotosCliente.ViewModels
             cliente.Desconectar();
         }
 
-        private void Eliminar(ImageDTO i)
+        private void Eliminar(ListaModel l) //no entra el comando de este metodo, le puse otro modelo que hice para pasar la info, al final si es un ImageDTO
         {
-            
+            if (l != null)
+            {
+               
+                byte[] bytesImg = File.ReadAllBytes(l.Imagen.ToString());
+                ImageDTO img = new()
+                {
+                    ImagenId = l.id,
+                    Estado = false,
+                    NombreUser = cliente.Equipo,
+                    Img = Convert.ToBase64String(bytesImg),
+                };
+                cliente.EnviarIMG(img);
+            }
         }
 
         private void Conectar()
@@ -115,13 +141,7 @@ namespace GaleriaDeFotosCliente.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(Imagen) && Conectado)
             {
-                //string camello;
-                //using(MemoryStream ms = new())
-                //{
-                //    Imagencion.Save(ms, Imagencion.RawFormat);
-                //    camello = ms.ToString();
-                //}
-                //string camello = 
+               
                 byte[] bytesImg = File.ReadAllBytes(Imagen);
 
                 ImageDTO img = new()
@@ -130,14 +150,14 @@ namespace GaleriaDeFotosCliente.ViewModels
                     NombreUser = cliente.Equipo,
                     Img = Convert.ToBase64String(bytesImg)
                 };
-                //ListaImgs.Add(img);
+                
                 cliente.EnviarIMG(img);
                 Imagen = "";
             }
         }
 
 
-        //Lo hice pensando que tmb tendria un carrusel el cliente
+        
 
         
 
