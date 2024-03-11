@@ -92,18 +92,22 @@ namespace GaleriaDeFotosServer.Services
                      
             while (c.Connected)
             {
-                var networkStream = c.GetStream();
+                var ns = c.GetStream();
+                string json = "";
                 while(c.Available == 0)
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(500);
                 }
-                byte[] buffer = new byte[c.Available];
-                networkStream.Read(buffer, 0, buffer.Length);
-                string json = Encoding.UTF8.GetString(buffer);
-
-
+                while (c.Available > 0)
+                {
+                    byte[] buffer = new byte[c.Available];
+                    ns.Read(buffer, 0, buffer.Length );
+                    json +=  Encoding.UTF8.GetString(buffer);               
+                }
                 var dto = JsonSerializer.Deserialize<ImageDTO>(json);
-                if(dto != null)
+
+
+                if (dto != null && c.Available == 0)
                 {
                     if (RecienConectadoBandera)
                     {
@@ -114,7 +118,8 @@ namespace GaleriaDeFotosServer.Services
                     {
                         FotoRecibida?.Invoke(this, dto);
                     });
-                }             
+                }
+                //Thread.Sleep(1000);
             }
         }
     }

@@ -70,7 +70,7 @@ namespace GaleriaDeFotosCliente.Services
 
         }
 
-        public void EnviarIMG(ImageDTO img) 
+        public void EnviarIMG(ImageDTO img)
         {
             if (!string.IsNullOrWhiteSpace(img.Img))
             {
@@ -82,7 +82,30 @@ namespace GaleriaDeFotosCliente.Services
                 ns.Flush();
             }
         }
+        //public void EnviarIMG(ImageDTO img)
+        //{
+        //    if (!string.IsNullOrWhiteSpace(img.Img))
+        //    {
+        //        var json = JsonSerializer.Serialize(img);
+        //        byte[] buffer = Encoding.UTF8.GetBytes(json);
 
+        //       using(NetworkStream ns = client.GetStream())
+        //        {
+        //            int bytesEnviados = 0;
+        //            int bloque = 1024;
+        //            int bytesRestantes;
+        //            while (bytesEnviados < buffer.Length)
+        //            {
+        //                bytesRestantes = buffer.Length - bytesEnviados;
+        //                int bytesEnviar = Math.Min(bytesRestantes, bloque);
+        //                ns.Write(buffer,bytesEnviados,bytesEnviar);
+        //                bytesEnviados += bytesEnviados;
+        //                ns.Flush();
+        //            }
+        //        }
+
+        //    }
+        //}
         public event EventHandler<ImageDTO>? ImagenRecibida;
     }
 }
