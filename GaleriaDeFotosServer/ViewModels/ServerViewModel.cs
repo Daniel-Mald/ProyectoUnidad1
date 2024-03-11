@@ -30,7 +30,7 @@ namespace GaleriaDeFotosServer.ViewModels
         public GaleriaServer _server { get; set; } = new();
         //public ObservableCollection<Image> Imagenes { get; set; } = new();
         public ObservableCollection<BitmapImage> Imagenes2 { get; set; } = new();
-        public ObservableCollection<string> Imagenes3 { get; set; } = new();
+        //public ObservableCollection<string> Imagenes3 { get; set; } = new();
 
 
 
@@ -70,7 +70,8 @@ namespace GaleriaDeFotosServer.ViewModels
 
                 }
 
-                PasarABitMapImage($"{rutaImagenes}{e.NombreUser}/{n+1}.jpg");
+                var imagenN =PasarABitMapImage($"{rutaImagenes}{e.NombreUser}/{n+1}.jpg");
+                Imagenes2.Add(imagenN);
                 //Imagenes.Add(_image);
             }
             else
@@ -129,7 +130,7 @@ namespace GaleriaDeFotosServer.ViewModels
                    
                     //Imagenes.Add(Image.FromFile(j));
                    Imagenes2.Add( PasarABitMapImage(j));
-                    Imagenes3.Add(j);
+                    //Imagenes3.Add(j);
                 }
             }
             
@@ -140,9 +141,8 @@ namespace GaleriaDeFotosServer.ViewModels
             BitmapImage imagen = new BitmapImage();
             imagen.BeginInit();
             imagen.UriSource = new Uri(ruta, UriKind.Relative);
-            imagen.DecodePixelHeight = 100;
-            imagen.DecodePixelWidth = 100;
-            imagen.CacheOption = BitmapCacheOption.Default;
+            imagen.CacheOption = BitmapCacheOption.OnLoad;
+           // imagen.UriSource = new Uri(imagePath);
             imagen.EndInit();
 
             return imagen;

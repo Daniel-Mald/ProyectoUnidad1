@@ -46,7 +46,7 @@
             <ColumnDefinition Width=".25*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <ListBox x:Name="imageListBox" 
-                 ItemsSource="{Binding ListaImgs}"
+                 ItemsSource="{Binding ListaImagenes}"
                  HorizontalAlignment="Stretch" 
                  VerticalAlignment="Stretch"
                  Background="#FFF5E0"

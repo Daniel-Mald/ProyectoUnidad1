@@ -14,20 +14,20 @@
         <TextBlock>Ip</TextBlock>
         <TextBox Text="{Binding IP}"></TextBox>
         <Button Command="{Binding IniciarServerCommand}">Iniciar el perro server</Button>
-        <ItemsControl x:Name="imageListBox" ItemsSource="{Binding Imagenes2}" HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="500">
-            <ItemsControl.ItemsPanel>
+        <ListBox x:Name="imageListBox" ItemsSource="{Binding Imagenes2}" HorizontalAlignment="Left" Height="300" VerticalAlignment="Top" Width="500">
+            <!--<ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel></WrapPanel>
            
                         
                 </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
+            </ItemsControl.ItemsPanel>-->
+            <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Image Source="{Binding}" Height="100" Margin="5"/>
 
                 </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </StackPanel>
 </Window>

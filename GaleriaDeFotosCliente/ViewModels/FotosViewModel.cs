@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Drawing;
 using Microsoft.Win32;
+using System.Windows.Media.Imaging;
 
 
 namespace GaleriaDeFotosCliente.ViewModels
@@ -37,6 +38,7 @@ namespace GaleriaDeFotosCliente.ViewModels
 
         
         public ObservableCollection<ImageDTO> ListaImgs { get; set; } = new();
+        public ObservableCollection<BitmapImage> ListaImagenes { get; set; } = new();
 
         public FotosViewModel()
         {
@@ -56,7 +58,9 @@ namespace GaleriaDeFotosCliente.ViewModels
             {
 
                Imagen = openFileDialog.FileName;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Imagen)));
             }
+
         }
 
         private void Cliente_ImagenRecibida1(object? sender, ImageDTO e)
@@ -64,9 +68,28 @@ namespace GaleriaDeFotosCliente.ViewModels
             Application.Current.Dispatcher.Invoke(() =>
             {
                 ListaImgs.Add(e);
+                byte[] bytes = Convert.FromBase64String(e.Img);
+                
+                using (MemoryStream ms = new MemoryStream(bytes))
+                {
+                    BitmapImage imagen = new BitmapImage();
+                    imagen.BeginInit();
+                    imagen.UriSource = new Uri(System.Drawing.Image.FromStream(ms).ToString());
+                    imagen.CacheOption = BitmapCacheOption.OnLoad;
+                    // imagen.UriSource = new Uri(imagePath);
+                    imagen.EndInit();
+
+
+
+
+                    ListaImagenes.Add(imagen);
+                }
             });
         }
+        void CargarFotos()
+        {
 
+        }
         private void Desconectar()
         {
             cliente.Desconectar();
@@ -90,7 +113,7 @@ namespace GaleriaDeFotosCliente.ViewModels
 
         private void Enviar()
         {
-            if (!string.IsNullOrWhiteSpace(Imagen))
+            if (!string.IsNullOrWhiteSpace(Imagen) && Conectado)
             {
                 //string camello;
                 //using(MemoryStream ms = new())
@@ -109,6 +132,7 @@ namespace GaleriaDeFotosCliente.ViewModels
                 };
                 //ListaImgs.Add(img);
                 cliente.EnviarIMG(img);
+                Imagen = "";
             }
         }
 

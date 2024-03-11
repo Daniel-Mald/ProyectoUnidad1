@@ -46,19 +46,23 @@ namespace GaleriaDeFotosCliente.Services
                 {
                     while (client.Connected)
                     {
-                        var ns = client.GetStream();
-                        byte[] buffer = new byte[client.Available];
-                        ns.Read(buffer, 0, buffer.Length);
-
-                        var img = JsonSerializer.Deserialize<ImageDTO>
-                        (Encoding.UTF8.GetString(buffer));
-                        Application.Current.Dispatcher.Invoke(() =>
+                        if(client.Available> 0)
                         {
-                            if (img != null)
+                            var ns = client.GetStream();
+                            byte[] buffer = new byte[client.Available];
+                            ns.Read(buffer, 0, buffer.Length);
+
+                            var img = JsonSerializer.Deserialize<ImageDTO>
+                            (Encoding.UTF8.GetString(buffer));
+                            Application.Current.Dispatcher.Invoke(() =>
                             {
-                                ImagenRecibida?.Invoke(this, img);
-                            }
-                        });
+                                if (img != null)
+                                {
+                                    ImagenRecibida?.Invoke(this, img);
+                                }
+                            });
+
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -82,30 +86,7 @@ namespace GaleriaDeFotosCliente.Services
                 ns.Flush();
             }
         }
-        //public void EnviarIMG(ImageDTO img)
-        //{
-        //    if (!string.IsNullOrWhiteSpace(img.Img))
-        //    {
-        //        var json = JsonSerializer.Serialize(img);
-        //        byte[] buffer = Encoding.UTF8.GetBytes(json);
-
-        //       using(NetworkStream ns = client.GetStream())
-        //        {
-        //            int bytesEnviados = 0;
-        //            int bloque = 1024;
-        //            int bytesRestantes;
-        //            while (bytesEnviados < buffer.Length)
-        //            {
-        //                bytesRestantes = buffer.Length - bytesEnviados;
-        //                int bytesEnviar = Math.Min(bytesRestantes, bloque);
-        //                ns.Write(buffer,bytesEnviados,bytesEnviar);
-        //                bytesEnviados += bytesEnviados;
-        //                ns.Flush();
-        //            }
-        //        }
-
-        //    }
-        //}
+        
         public event EventHandler<ImageDTO>? ImagenRecibida;
     }
 }
