@@ -39,7 +39,7 @@
     </ItemsControl>
 </StackPanel>-->
 
-    <DockPanel Background="#FFF5E0">
+    <DockPanel Background="#F8b0c8">
         <DockPanel DockPanel.Dock="Top"
                Height="50">
             <!--AQUI VA LA IP Y EL BOTON PARA QUE MIGUEL PRENDA EL SERVER-->
@@ -108,31 +108,37 @@
 
         <Grid>
             <!--AQUI VA LA IMAGEN MAS RECIENTE-->
-            <Border Margin="20"
+            <!--<Border Margin="20"
                 CornerRadius="25">
                 <Border.Background>
                     <ImageBrush Stretch="UniformToFill" ImageSource="{Binding UltimaImg}"></ImageBrush>
                 </Border.Background>
-            </Border>
-            <!--<Canvas>
+            </Border>-->
 
-            <Path Stroke="Red" StrokeThickness="5"
-                  VerticalAlignment="Top"
-                  StrokeEndLineCap="Flat"
-                  StrokeStartLineCap="Flat"
+            <Path Stroke="#e0115f" StrokeThickness="10"
+                  VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                  RenderTransformOrigin=".5,.5"
+                  StrokeEndLineCap="Round"
+                  StrokeStartLineCap="Round"
                   Stretch="Fill"
                   Data="M 241,200 
                           A 20,20 0 0 0 200,240
                           C 210,250 240,270 240,270
                           C 240,270 260,260 280,240
-                          A 20,20 0 0 0 239,200">
+                          A 20,20 0 0 0 239,200" Height="500" Width="600">
                 <Path.Fill>
                     <ImageBrush Stretch="UniformToFill" 
-                                ImageSource="../Resources/Images/KissCam.png" 
+                                ImageSource="{Binding UltimaImg}"
                                 RenderOptions.BitmapScalingMode="Fant"></ImageBrush>
                 </Path.Fill>
+                <Path.Effect>
+                    <DropShadowEffect Color="White"
+                                          Direction="0"
+                                          ShadowDepth="0"
+                                          BlurRadius="55"></DropShadowEffect>
+                </Path.Effect>
             </Path>
-        </Canvas>-->
         </Grid>
     </DockPanel>
 </Window>
