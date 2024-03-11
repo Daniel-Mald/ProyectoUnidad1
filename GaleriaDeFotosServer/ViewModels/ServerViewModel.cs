@@ -98,6 +98,7 @@ namespace GaleriaDeFotosServer.ViewModels
         {
             _server.IniciarServer();
             CargarImagenes();
+            if(UltimaImg != null)
             UltimaImg = Imagenes2.Last();
         }
         [RelayCommand]

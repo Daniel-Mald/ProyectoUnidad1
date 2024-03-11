@@ -60,9 +60,10 @@
                                Width="200" 
                                Margin="5"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
-                        <Button Command="{Binding Source={RelativeSource AncestorType={x:Type Window}},Path=DataContext.EliminarCommand}" 
+                            <Button Command="{Binding Path=  DataContext.EliminarCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
                                 CommandParameter="{Binding .}"
                                 Content="&#x274C;"
+                                
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top"
                                 Margin="15"

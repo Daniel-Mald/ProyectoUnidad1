@@ -53,7 +53,7 @@ namespace GaleriaDeFotosCliente.Services
                         
                            
                             
-                                var ns = client.GetStream();
+                        var ns = client.GetStream();
                         string json = "";
 
 
@@ -125,7 +125,7 @@ namespace GaleriaDeFotosCliente.Services
 
         public void EnviarIMG(ImageDTO img)
         {
-            if (!string.IsNullOrWhiteSpace(img.Img))
+            if (!string.IsNullOrWhiteSpace(img.Img) || img.Estado == false)
             {
                 var json = JsonSerializer.Serialize(img);
                 byte[] buffer = Encoding.UTF8.GetBytes(json);

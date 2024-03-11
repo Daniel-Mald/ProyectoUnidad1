@@ -113,16 +113,18 @@ namespace GaleriaDeFotosCliente.ViewModels
         {
             if (l != null)
             {
+                
                
-                byte[] bytesImg = File.ReadAllBytes(l.Imagen.ToString());
-                ImageDTO img = new()
-                {
-                    ImagenId = l.id,
-                    Estado = false,
-                    NombreUser = cliente.Equipo,
-                    Img = Convert.ToBase64String(bytesImg),
-                };
-                cliente.EnviarIMG(img);
+                    
+                    ImageDTO img = new()
+                    {
+                        ImagenId = l.id,
+                        Estado = false,
+                        NombreUser = cliente.Equipo,
+                        Img = ""
+                    };
+                    cliente.EnviarIMG(img);
+                
             }
         }
 

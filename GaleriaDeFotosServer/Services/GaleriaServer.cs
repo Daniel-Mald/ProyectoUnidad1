@@ -113,7 +113,7 @@ namespace GaleriaDeFotosServer.Services
         
         void Recibir(TcpClient c)
         {
-            bool RecienConectadoBandera = true;
+            
                      
             while (c.Connected)
             {
@@ -135,14 +135,13 @@ namespace GaleriaDeFotosServer.Services
 
                 if(dto != null && dto.Estado == false)
                 {
-                    Directory.Delete($"../Imaagenes/{dto.NombreUser}/{dto.ImagenId}");
+                    File.Delete($"../Imagenes/{dto.NombreUser}/{dto.ImagenId}.jpg");
                 }
-                if (RecienConectadoBandera)
-                {
+               
                    //aqui manda las imagenes de regreso al cliente
                     MandarImagenes(dto.NombreUser, c);
-                    RecienConectadoBandera = false;
-                }
+                    
+                
                 if (dto != null && c.Available == 0)
                 {
                     
