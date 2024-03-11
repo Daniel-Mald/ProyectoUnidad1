@@ -28,9 +28,7 @@ namespace GaleriaDeFotosServer.ViewModels
         public string IP { get; set; } = "0.0.0.0";
         string rutaImagenes = @"..\Imagenes\";
         public GaleriaServer _server { get; set; } = new();
-        //public ObservableCollection<Image> Imagenes { get; set; } = new();
         public ObservableCollection<BitmapImage> Imagenes2 { get; set; } = new();
-        //public ObservableCollection<string> Imagenes3 { get; set; } = new();
 
 
 
@@ -72,7 +70,6 @@ namespace GaleriaDeFotosServer.ViewModels
 
                 var imagenN =PasarABitMapImage($"{rutaImagenes}{e.NombreUser}/{n+1}.jpg");
                 Imagenes2.Add(imagenN);
-                //Imagenes.Add(_image);
             }
             else
             {
@@ -93,8 +90,6 @@ namespace GaleriaDeFotosServer.ViewModels
                 
                 
             }
-            //guardar la imagen
-            //cargar la imagen a la lista
         }
 
         [RelayCommand]

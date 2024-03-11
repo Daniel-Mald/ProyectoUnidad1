@@ -32,14 +32,23 @@ namespace GaleriaDeFotosServer.Services
         }
         public void CerrarServer()
         {
-            if(_server != null && _server.Server.IsBound)
+            try
             {
-                _server.Stop();
-                foreach (var item in _clientes)
+                if (_server != null && _server.Server.IsBound)
                 {
-                    item.Close();
+                    _server.Stop();
+                    foreach (var item in _clientes)
+                    {
+                        item.Close();
+                    }
                 }
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
         }
         void Escuchar()
         {
@@ -63,32 +72,41 @@ namespace GaleriaDeFotosServer.Services
         //Este metodo le manda las imagenes que tiene al usuario
         void MandarImagenes(ImageDTO dto, TcpClient cliente)
         {
-            string ruta = $"../imagenes/{dto.NombreUser}";
-            if (Directory.Exists(ruta))
+            try
             {
-                //List<ImageDTO> imagenesDeVuelta = new();
-                Thread t = new(() =>
+                string ruta = $"../imagenes/{dto.NombreUser}";
+                if (Directory.Exists(ruta))
                 {
-                    var fotos = Directory.GetFiles(ruta);
-                    foreach (var item in fotos)
+                    //List<ImageDTO> imagenesDeVuelta = new();
+                    Thread t = new(() =>
                     {
-                        ImageDTO x = new()
+                        var fotos = Directory.GetFiles(ruta);
+                        foreach (var item in fotos)
                         {
-                            NombreUser = dto.NombreUser,
-                            Img = Convert.ToBase64String(File.ReadAllBytes(item))
-                        };
-                        // imagenesDeVuelta.Add(x);
-                        var json = JsonSerializer.Serialize(x);
-                        byte[] buffer = Encoding.UTF8.GetBytes(json);
-                        var ns = cliente.GetStream();
-                        ns.Write(buffer, 0, buffer.Length);
-                        ns.Flush();
-                    }
-                });
-                t.IsBackground=true; t.Start();
+                            ImageDTO x = new()
+                            {
+                                NombreUser = dto.NombreUser,
+                                Img = Convert.ToBase64String(File.ReadAllBytes(item))
+                            };
+                            // imagenesDeVuelta.Add(x);
+                            var json = JsonSerializer.Serialize(x);
+                            byte[] buffer = Encoding.UTF8.GetBytes(json);
+                            var ns = cliente.GetStream();
+                            ns.Write(buffer, 0, buffer.Length);
+                            ns.Flush();
+                        }
+                    });
+                    t.IsBackground = true; t.Start();
 
-               
+
+                }
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
             
         }
         void Recibir(TcpClient c)
