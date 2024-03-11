@@ -10,7 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Images\KissCam.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="cf5e7b842bc14056aa04fb60a2cd84e1 (1).ico" />
+    <Content Include="Resources\Images\KissCam.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -21,7 +28,6 @@
 
   <ItemGroup>
     <Folder Include="Imagenes\" />
-    <Folder Include="Views\" />
   </ItemGroup>
 
 </Project>
